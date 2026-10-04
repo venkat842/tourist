@@ -94,7 +94,7 @@ def generate_description(place, answer_type, language):
         raise ValueError("GEMINI_API_KEY environment variable is missing.")
     prompt = PROMPTS[answer_type].format(place=place, language=language)
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-3.1-flash-lite",
         contents=prompt
     )
     return response.text
