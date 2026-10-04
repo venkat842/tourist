@@ -124,9 +124,9 @@ voiceButtons.forEach(btn => {
 
 
 // --- Backend API Configuration ---
-// When running locally: "http://127.0.0.1:5000/generate-audio-guide"
-// When deployed (e.g. Render): "https://your-backend-app.onrender.com/generate-audio-guide"
-const BACKEND_BASE_URL = "http://127.0.0.1:5000"; 
+// When running locally: "http://127.0.0.1:5001"
+// When deployed (e.g. Render): "https://your-backend-app.onrender.com"
+const BACKEND_BASE_URL = "http://127.0.0.1:5001"; 
 const GENERATE_AUDIO_GUIDE_API_URL = `${BACKEND_BASE_URL}/generate-audio-guide`;
 
 generateButton.addEventListener('click', async () => {
