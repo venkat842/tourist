@@ -1,8 +1,7 @@
 services:
   - type: web
-    name: travel-guide-backend
-    env: python
-    rootDir: Backend
+    name: tourist-backend
+    runtime: python
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
