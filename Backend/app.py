@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from google import genai
 import requests
@@ -10,7 +10,19 @@ from dotenv import load_dotenv
 # Load environment variables from .env file for local development
 load_dotenv()
 
-app = Flask(__name__)
+# Discover frontend files location
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "Frontend"))
+
+if os.path.exists(os.path.join(STATIC_DIR, "index.html")):
+    WEB_DIR = STATIC_DIR
+elif os.path.exists(os.path.join(FRONTEND_DIR, "index.html")):
+    WEB_DIR = FRONTEND_DIR
+else:
+    WEB_DIR = BASE_DIR
+
+app = Flask(__name__, static_folder=WEB_DIR, static_url_path="")
 CORS(app)
 
 MURF_API_KEY = os.environ.get("MURF_API_KEY")
@@ -98,13 +110,28 @@ def generate_description(place, answer_type, language):
         contents=prompt
     )
     return response.text
-    
+
 @app.route("/", methods=["GET"])
+def serve_index():
+    if os.path.exists(os.path.join(WEB_DIR, "index.html")):
+        return send_from_directory(WEB_DIR, "index.html")
+    return jsonify({
+        "status": "healthy",
+        "message": "Travel Guide API is running"
+    })
+
+@app.route("/health", methods=["GET"])
 def health_check():
     return jsonify({
         "status": "healthy",
         "message": "Travel Guide API is running"
     })
+
+@app.route("/<path:path>", methods=["GET"])
+def serve_static(path):
+    if os.path.exists(os.path.join(WEB_DIR, path)):
+        return send_from_directory(WEB_DIR, path)
+    return jsonify({"error": "Not found"}), 404
 
 @app.route("/generate-audio-guide", methods=["POST"])
 def generate_audio_guide():
